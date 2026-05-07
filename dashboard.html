@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Task Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <h1>🚀 Team Task Manager</h1>
+  <div class="navbar-right">
+    <span id="userInfo"></span>
+    <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3 id="totalTasks">0</h3>
+      <p>Total Tasks</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="todoTasks">0</h3>
+      <p>To Do</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="progressTasks">0</h3>
+      <p>In Progress</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="doneTasks">0</h3>
+      <p>Done</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="overdueTasks">0</h3>
+      <p>Overdue</p>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+  <button class="tab active" onclick="showTab('projects', this)">📁 Projects</button>
+  <button class="tab" onclick="showTab('tasks', this)">✅ Tasks</button>
+  <button class="tab admin-only hidden" onclick="showTab('users', this)">👥 Users</button>
+</div>
+
+  <!-- PROJECTS TAB -->
+  <div id="projectsTab">
+    <div class="section">
+      <div class="section-header">
+        <h2>📁 Projects</h2>
+        <button class="btn btn-success btn-sm admin-only hidden" onclick="openProjectModal()">+ New Project</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Members</th>
+            <th>Created By</th>
+            <th class="admin-only hidden">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="projectsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TASKS TAB -->
+  <div id="tasksTab" class="hidden">
+    <div class="section">
+      <div class="section-header">
+        <h2>✅ Tasks</h2>
+        <button class="btn btn-success btn-sm admin-only hidden" onclick="openTaskModal()">+ New Task</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Project</th>
+            <th>Assigned To</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tasksTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- USERS TAB (admin only) -->
+  <div id="usersTab" class="hidden">
+    <div class="section">
+      <div class="section-header"><h2>👥 All Users</h2></div>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Role</th></tr>
+        </thead>
+        <tbody id="usersTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- PROJECT MODAL -->
+<div class="modal-overlay hidden" id="projectModal">
+  <div class="modal">
+    <h3>📁 New Project</h3>
+    <div class="form-group">
+      <label>Project Name</label>
+      <input type="text" id="projectName" placeholder="Enter project name">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="projectDesc" rows="3" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Add Members (select multiple)</label>
+      <select id="projectMembers" multiple style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;height:100px;"></select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="closeProjectModal()">Cancel</button>
+      <button class="btn btn-success" onclick="createProject()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="modal-overlay hidden" id="taskModal">
+  <div class="modal">
+    <h3>✅ New Task</h3>
+    <div class="form-group">
+      <label>Task Title</label>
+      <input type="text" id="taskTitle" placeholder="Enter task title">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="taskDesc" rows="2" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Project</label>
+      <select id="taskProject"></select>
+    </div>
+    <div class="form-group">
+      <label>Assign To</label>
+      <select id="taskAssign"></select>
+    </div>
+    <div class="form-group">
+      <label>Due Date</label>
+      <input type="date" id="taskDue">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="closeTaskModal()">Cancel</button>
+      <button class="btn btn-success" onclick="createTask()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS MODAL -->
+<div class="modal-overlay hidden" id="statusModal">
+  <div class="modal">
+    <h3>🔄 Update Status</h3>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="newStatus">
+        <option value="todo">To Do</option>
+        <option value="in-progress">In Progress</option>
+        <option value="done">Done</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="closeStatusModal()">Cancel</button>
+      <button class="btn btn-success" onclick="updateStatus()">Update</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
