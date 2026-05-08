@@ -1,4 +1,4 @@
-const API = 'https://team-task-manager-production-009e.up.railway.app/api';
+const API = 'https://team-task-manager-production-a356.up.railway.app/api';
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
